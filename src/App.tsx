@@ -5,7 +5,7 @@ import "./App.css";
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import UploadFile from "./components /UploadFiles";
 import Files from "./components /Files";
-import { Pagination, Spinner, Title } from "@telegram-apps/telegram-ui";
+import { Spinner, Title } from "@telegram-apps/telegram-ui";
 
 function App() {
   const {initDataRaw, initData } = useLaunchParams() || {};
@@ -62,30 +62,32 @@ function App() {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <Title
-            level="1"
-            weight="1"
-          >
-          PinnieBox
-          </Title>
-          {isLoading ? (
-            <Spinner size="l" />
-          ) : isAuthenticated ? (
-            <>
-          <UploadFile telegramId={telegramId} chatId={chatId} chatType={chatType}/>
-          <Files chatId={chatId}/>
-          </>
-          ) : errorMessage ? (
-            <p>{errorMessage}</p>
-          ) : (
-            <p>User is not authenticated</p>
-          )}
+        <div style={{width: "100vw", height: "100vh", textAlign: "center",  backgroundImage: `url(${"https://refactor_gateway_create.dev-mypinata.cloud/ipfs/bafkreicsb4n2y2evpb7xcqel3bsej2omos4itx3v56sfzmjtp4fh2gzpru"})`,
+          backgroundSize: 'cover',
+          overflow: 'hidden',
+          backgroundRepeat: 'no-repeat', }}>
+            <div style={{padding: "15px", backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left"}}>       
+            <Title
+              level="1"
+              weight="1"
+            >
+            PinnieBox
+            </Title>
+            <UploadFile telegramId={telegramId} chatId={chatId} chatType={chatType}/>
+            </div>
+          
+            {isLoading ? (
+              <Spinner size="l" />
+            ) : isAuthenticated ? (
+              <>
+            <Files chatId={chatId}/>
+            </>
+            ) : errorMessage ? (
+              <p>{errorMessage}</p>
+            ) : (
+              <p>User is not authenticated</p>
+            )}
         </div>
-      </header>
-    </div>
   );
 }
 

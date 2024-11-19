@@ -54,7 +54,7 @@ const FileModal = ({ file }: any) => {
     return (
         <Modal
           header={<ModalHeader>{file.name}</ModalHeader>}
-          trigger={<Button>View</Button>}
+          trigger={<Button style={{backgroundColor: "#33f9a1", color: "black"}}>View</Button>}
           open={open}
           onOpenChange={handleOpenChange}
         >

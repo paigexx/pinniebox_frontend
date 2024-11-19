@@ -1,28 +1,33 @@
-import { Button, FileInput, Spinner } from "@telegram-apps/telegram-ui";
-import { InlineButtonsItem } from "@telegram-apps/telegram-ui/dist/components/Blocks/InlineButtons/components/InlineButtonsItem/InlineButtonsItem";
-import { useState } from "react";
-
+import { Spinner } from "@telegram-apps/telegram-ui";
+import { useState, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileUpload,
+  faCheckCircle,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface UploadFileProps {
-    telegramId: string;
-    chatId: string;
-    chatType: string;
-  }
+  telegramId: string;
+  chatId: string;
+  chatType: string;
+}
 
+const UploadFile: React.FC<UploadFileProps> = ({ chatId, chatType }) => {
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-const UploadFile: React.FC<UploadFileProps> = ({ telegramId, chatId, chatType })  => {
-    const [isUploading, setIsUploading] = useState(false); 
-    const [uploaded, setUploaded] = useState(false);
-
-    const handleFileUpload = async (file: File | undefined) => {
+  const handleFileUpload = async (file: File | undefined) => {
     if (!file) return;
     const serverUrl = process.env.REACT_APP_SERVER_URL;
 
     try {
-      setIsUploading(true);
+      setUploadStatus("uploading");
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("chat_id", chatId)
+      formData.append("chat_id", chatId);
       formData.append("chat_type", chatType);
 
       const response = await fetch(`${serverUrl}/files`, {
@@ -31,40 +36,58 @@ const UploadFile: React.FC<UploadFileProps> = ({ telegramId, chatId, chatType })
       });
 
       if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Upload failed: ${response.status} ${response.statusText}`
+        );
       }
 
       const data = await response.json();
-      if (data.ok) {
-        console.log("File uploaded successfully:", data);
-      } else {
-        console.error("File upload failed:", data);
-      }
+      console.log("File uploaded successfully:", data);
+      setUploadStatus("success");
     } catch (error) {
       console.error("Error during file upload:", error);
-    } finally {
-      setIsUploading(false);
-      setUploaded(true);
+      setUploadStatus("error");
     }
   };
 
-    return (
-        <div>
-            {uploaded &&
-            <>
-              <p>Success 💫 </p>
-              <Button onClick={() => setUploaded(false)}>Upload more</Button>  
-            </>
-            }
-            {!isUploading && !uploaded && (
-              <FileInput label="upload"
-               onChange={(e) => handleFileUpload(e.target.files?.[0])}
-                 />
-            )}
-            {isUploading && <Spinner size="l" />
-}
-        </div>
-    )
-}
+  useEffect(() => {
+    if (uploadStatus === "success" || uploadStatus === "error") {
+      const timer = setTimeout(() => {
+        setUploadStatus("idle");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [uploadStatus]);
 
-export default UploadFile
+  return (
+    <div style={{ textAlign: "center" }}>
+      {uploadStatus === "idle" && (
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          style={{ cursor: "pointer" }}
+        >
+          <FontAwesomeIcon icon={faFileUpload} size="2x" />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={(e) => handleFileUpload(e.target.files?.[0])}
+          />
+        </div>
+      )}
+      {uploadStatus === "uploading" && <Spinner size="l" />}
+      {uploadStatus === "success" && (
+        <div>
+          <FontAwesomeIcon icon={faCheckCircle} size="2x" color="green" />
+        </div>
+      )}
+      {uploadStatus === "error" && (
+        <div>
+          <FontAwesomeIcon icon={faTimesCircle} size="2x" color="red" />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UploadFile;

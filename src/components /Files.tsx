@@ -1,5 +1,4 @@
-import { Avatar, Button, ButtonCell, Cell, List, Modal, Pagination, Placeholder, Section } from "@telegram-apps/telegram-ui";
-import { ModalHeader } from "@telegram-apps/telegram-ui/dist/components/Overlays/Modal/components/ModalHeader/ModalHeader";
+import { Button, Cell, List, Section } from "@telegram-apps/telegram-ui";
 import { useEffect, useState } from "react";
 import FileModal from "./FileModal";
 
@@ -59,25 +58,26 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
     };
 
     return (
-        <div style={{ alignContent: "center" }}>
-            <p>{errorMessage}</p>
-            {isLoading && <p>Loading...</p>}
-            <List>
-                {files.map((file, index) => (
-                    <div key={index}>
-                        <Section>
-                            <Cell after={<FileModal file={file} />}>
-                                <p>{truncateFileName(file.name, 13)}</p>
-                            </Cell>
-                        </Section>
-                    </div>
-                ))}
-                <Button disabled={currentPageIndex === 0} onClick={() => {
-                    const newPageIndex = currentPageIndex - 1;
-                    setCurrentPageIndex(newPageIndex);
-                    getFiles(chatId, pageTokens[newPageIndex]);
-                }}>prev</Button>
-                <Button disabled={files.length < 5} onClick={() => {
+        <div style={{height: "100%", justifyContent: "space-between"}}>
+            <div>
+            `  <p>{errorMessage}</p>
+                {isLoading && <p>Loading...</p>}
+                <List>
+                    {files.map((file, index) => (
+                        <div key={index} style={{display: "flex", justifyContent: "space-between", padding: "15px", backgroundColor: "black", opacity: ".95", borderRadius: "10px"}}>
+                            <p>{truncateFileName(file.name, 13)}</p> 
+                            <FileModal file={file}  />  
+                        </div>
+                    ))}
+                </List>
+            </div>
+            <div>
+                <Button style={{margin: "10px", backgroundColor: "#33f9a1", color: "black"}} disabled={currentPageIndex === 0} onClick={() => {
+                        const newPageIndex = currentPageIndex - 1;
+                        setCurrentPageIndex(newPageIndex);
+                        getFiles(chatId, pageTokens[newPageIndex]);
+                    }}>-</Button>
+                <Button style={{margin: "10px", backgroundColor: "#33f9a1", color: "black"}} disabled={files.length < 5} onClick={() => {
                     const newPageIndex = currentPageIndex + 1;
                     setCurrentPageIndex(newPageIndex);
                     const nextPageToken = pageTokens[newPageIndex];
@@ -86,8 +86,9 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
                     } else {
                         getFiles(chatId, pageTokens[currentPageIndex]);
                     }
-                }}>more</Button>
-            </List>
+                }}>+</Button>
+            </div>
+       
         </div>
     );
 };
