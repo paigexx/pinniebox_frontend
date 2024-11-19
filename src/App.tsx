@@ -66,27 +66,27 @@ function App() {
           backgroundSize: 'cover',
           overflow: 'hidden',
           backgroundRepeat: 'no-repeat', }}>
-            <div style={{padding: "15px", backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left"}}>       
-            <Title
-              level="1"
-              weight="1"
-            >
-            PinnieBox
-            </Title>
-            <UploadFile telegramId={telegramId} chatId={chatId} chatType={chatType}/>
-            </div>
-          
-            {isLoading ? (
-              <Spinner size="l" />
-            ) : isAuthenticated ? (
-              <>
-            <Files chatId={chatId}/>
-            </>
-            ) : errorMessage ? (
-              <p>{errorMessage}</p>
-            ) : (
-              <p>User is not authenticated</p>
-            )}
+          <div style={{padding: "15px", backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left"}}>       
+          <Title
+            level="1"
+            weight="1"
+          >
+          PinnieBox
+          </Title>
+          <UploadFile telegramId={telegramId} chatId={chatId} chatType={chatType}/>
+          </div>
+         
+          {isLoading ? (
+            <Spinner size="l" />
+          ) : isAuthenticated ? (
+            <>
+          <Files chatId={chatId}/>
+          </>
+          ) : errorMessage ? (
+            <p>{errorMessage}</p>
+          ) : (
+            <p>User is not authenticated</p>
+          )}
         </div>
   );
 }

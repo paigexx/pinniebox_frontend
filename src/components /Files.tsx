@@ -58,26 +58,31 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
     };
 
     return (
-        <div style={{height: "100%", justifyContent: "space-between"}}>
+        <div>
             <div>
             `  <p>{errorMessage}</p>
                 {isLoading && <p>Loading...</p>}
-                <List>
+                <li>
                     {files.map((file, index) => (
-                        <div key={index} style={{display: "flex", justifyContent: "space-between", padding: "15px", backgroundColor: "black", opacity: ".95", borderRadius: "10px"}}>
-                            <p>{truncateFileName(file.name, 13)}</p> 
+                        <div key={index} style={{display: "flex", justifyContent: "space-between", padding: "15px", backgroundColor: "black", opacity: ".9", borderRadius: "20px"}}>
+                            <p>{truncateFileName(file.name, 15)}</p> 
                             <FileModal file={file}  />  
                         </div>
                     ))}
-                </List>
+                </li>
             </div>
-            <div>
-                <Button style={{margin: "10px", backgroundColor: "#33f9a1", color: "black"}} disabled={currentPageIndex === 0} onClick={() => {
+            <div  style={{
+                display: 'flex',  
+                backgroundColor: 'white',
+                marginTop: '20px',
+                borderRadius: "10px"
+            }}>
+                <Button style={{ width: "50vw", backgroundColor: "#33f9a1", color: "black"}} disabled={currentPageIndex === 0} onClick={() => {
                         const newPageIndex = currentPageIndex - 1;
                         setCurrentPageIndex(newPageIndex);
                         getFiles(chatId, pageTokens[newPageIndex]);
                     }}>-</Button>
-                <Button style={{margin: "10px", backgroundColor: "#33f9a1", color: "black"}} disabled={files.length < 5} onClick={() => {
+                <Button style={{ width: "50vw", backgroundColor: "#33f9a1", color: "black"}} disabled={files.length < 5} onClick={() => {
                     const newPageIndex = currentPageIndex + 1;
                     setCurrentPageIndex(newPageIndex);
                     const nextPageToken = pageTokens[newPageIndex];
@@ -88,7 +93,6 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
                     }
                 }}>+</Button>
             </div>
-       
         </div>
     );
 };
