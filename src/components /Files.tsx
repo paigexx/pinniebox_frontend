@@ -67,7 +67,7 @@ const Files: React.FC<FilesProps> = ({ chatId }) => {
             backgroundColor: "#33f9a1",
             color: "black",
           }}
-          disabled={!files?.data?.next_page_token || isFetching}
+          disabled={files?.data?.files.length < 5  || isFetching}
           onClick={handleNextPage}
         >
           Next

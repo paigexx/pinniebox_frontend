@@ -8,7 +8,7 @@ import Files from "./components /Files";
 import { Spinner, Title } from "@telegram-apps/telegram-ui";
 
 function App() {
-  const {initDataRaw, initData } = useLaunchParams() || {};
+  const {initDataRaw} = useLaunchParams() || {};
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [chatId, setChatId] = useState<string>("");
