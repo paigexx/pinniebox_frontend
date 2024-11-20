@@ -6,18 +6,19 @@ import {
   faCheckCircle,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
+import { useGetFiles } from "../hooks/queries/UseFiles";
 
 interface UploadFileProps {
-  telegramId: string;
   chatId: string;
-  chatType: string;
 }
 
-const UploadFile: React.FC<UploadFileProps> = ({ chatId, chatType }) => {
+const UploadFile: React.FC<UploadFileProps> = ({ chatId}) => {
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { refetch } = useGetFiles(chatId, "");
 
   const handleFileUpload = async (file: File | undefined) => {
     if (!file) return;
@@ -28,7 +29,6 @@ const UploadFile: React.FC<UploadFileProps> = ({ chatId, chatType }) => {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("chat_id", chatId);
-      formData.append("chat_type", chatType);
 
       const response = await fetch(`${serverUrl}/files`, {
         method: "POST",
@@ -44,6 +44,9 @@ const UploadFile: React.FC<UploadFileProps> = ({ chatId, chatType }) => {
       const data = await response.json();
       console.log("File uploaded successfully:", data);
       setUploadStatus("success");
+
+      // Refetch files after successful upload
+      await refetch();
     } catch (error) {
       console.error("Error during file upload:", error);
       setUploadStatus("error");

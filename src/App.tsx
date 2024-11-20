@@ -11,12 +11,12 @@ function App() {
   const {initDataRaw, initData } = useLaunchParams() || {};
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const chatId = initData?.chatInstance!
-  const chatType = initData?.chatType!
-  const telegramId = initData?.user?.id.toString()!
+  const [chatId, setChatId] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+
   useTelegramMock();
+  const isMocked = process.env.REACT_APP_MOCK_TELEGRAM === "true";
 
   useEffect(() => {
     if (initDataRaw) {
@@ -25,12 +25,12 @@ function App() {
           setIsLoading(true); 
           const payload: any = {
             initData: initDataRaw,
-            isMocked: false,
+            isMocked: isMocked,
           };
 
           const serverUrl = process.env.REACT_APP_SERVER_URL;
           const response = await fetch(
-            `${serverUrl}/auth/telegram`,
+            `${serverUrl}/auth`,
             {
               method: "POST",
               headers: {
@@ -45,9 +45,10 @@ function App() {
               `Server error: ${response.status} ${response.statusText}`
             );
           }
+          const data = await response.json();
           setIsAuthenticated(true);
+          setChatId(data.chat_id);
         } catch (error) {
-          console.error("Error during authentication:", error);
           setErrorMessage(`An error occurred during authentication: ${error}`);
         } finally {
           setIsLoading(false); 
@@ -67,25 +68,15 @@ function App() {
           overflow: 'hidden',
           backgroundRepeat: 'no-repeat', }}>
           <div style={{padding: "15px", backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left"}}>       
-          <Title
-            level="1"
-            weight="1"
-          >
-          PinnieBox
-          </Title>
-          <UploadFile telegramId={telegramId} chatId={chatId} chatType={chatType}/>
+            <Title level="1" weight="1">
+              PinnieBox
+            </Title>
+            {isAuthenticated && <UploadFile chatId={chatId}/>}
           </div>
-         
-          {isLoading ? (
-            <Spinner size="l" />
-          ) : isAuthenticated ? (
-            <>
-          <Files chatId={chatId}/>
-          </>
-          ) : errorMessage ? (
-            <p>{errorMessage}</p>
-          ) : (
-            <p>User is not authenticated</p>
+          {isLoading ? ( <Spinner size="l" /> ) 
+          : isAuthenticated ? (<Files chatId={chatId}/>) 
+          : errorMessage ? ( <p>{errorMessage}</p>) 
+          : (<p>User is not authenticated</p>
           )}
         </div>
   );
