@@ -14,7 +14,6 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
     const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
 
     useEffect(() => {
-        console.log(chatId)
         getFiles(chatId, pageTokens[currentPageIndex]);
     }, [chatId]);
 
@@ -59,19 +58,7 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
 
     return (
         <div>
-            <div>
-            `  <p>{errorMessage}</p>
-                {isLoading && <p>Loading...</p>}
-                <li>
-                    {files.map((file, index) => (
-                        <div key={index} style={{display: "flex", justifyContent: "space-between", padding: "15px", backgroundColor: "black", opacity: ".9", borderRadius: "20px"}}>
-                            <p>{truncateFileName(file.name, 15)}</p> 
-                            <FileModal file={file}  />  
-                        </div>
-                    ))}
-                </li>
-            </div>
-            <div  style={{
+             <div  style={{
                 display: 'flex',  
                 backgroundColor: 'white',
                 marginTop: '20px',
@@ -82,7 +69,7 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
                         setCurrentPageIndex(newPageIndex);
                         getFiles(chatId, pageTokens[newPageIndex]);
                     }}>-</Button>
-                <Button style={{ width: "50vw", backgroundColor: "#33f9a1", color: "black"}} disabled={files.length < 5} onClick={() => {
+                <Button style={{ width: "50vw", backgroundColor: "#33f9a1", color: "black"}} disabled={files.length < 4} onClick={() => {
                     const newPageIndex = currentPageIndex + 1;
                     setCurrentPageIndex(newPageIndex);
                     const nextPageToken = pageTokens[newPageIndex];
@@ -92,6 +79,18 @@ const Files: React.FC<FilesProps> = ({ chatId }: FilesProps) => {
                         getFiles(chatId, pageTokens[currentPageIndex]);
                     }
                 }}>+</Button>
+            </div>
+            <div>
+             <p>{errorMessage}</p>
+                {isLoading && <p>Loading...</p>}
+                <li>
+                    {files.map((file, index) => (
+                        <div key={index} style={{display: "flex", justifyContent: "space-between", padding: "15px", backgroundColor: "black", opacity: ".9", borderRadius: "20px"}}>
+                            <p>{truncateFileName(file.name, 15)}</p> 
+                            <FileModal file={file}  />  
+                        </div>
+                    ))}
+                </li>
             </div>
         </div>
     );
